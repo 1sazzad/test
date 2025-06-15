@@ -1,0 +1,85 @@
+import {
+	Table,
+	Column,
+	Model,
+	PrimaryKey,
+	AutoIncrement,
+	ForeignKey,
+	BelongsTo,
+	DataType,
+} from "sequelize-typescript";
+import Order from "../model/order.model";
+import Product from "../model/product.model";
+import ProductVariant from "./product-variant.model";
+
+export interface OrderItemAttributes {
+	orderItemId: number;
+	orderId: number;
+	productId: number;
+	productVariantId: number;
+	quantity: number;
+	size: number | null;
+	widthInch: number | null;
+	heightInch: number | null;
+	price: number;
+	createdAt: Date;
+	deletedAt: Date;
+}
+
+export interface OrderItemCreationAttributes {
+	orderId: number;
+	productId: number;
+	productVariantId: number;
+	quantity: number;
+	size: number | null;
+	widthInch: number | null;
+	heightInch: number | null;
+	price: number;
+}
+
+@Table({ tableName: "OrderItems", timestamps: true })
+export default class OrderItem extends Model<
+	OrderItemAttributes,
+	OrderItemCreationAttributes
+> {
+	@PrimaryKey
+	@AutoIncrement
+	@Column({ type: DataType.INTEGER, allowNull: false })
+	declare orderItemId: number;
+
+	@ForeignKey(() => Order)
+	@Column({ type: DataType.INTEGER, allowNull: false })
+	declare orderId: number;
+
+	@ForeignKey(() => Product)
+	@Column({ type: DataType.INTEGER, allowNull: false })
+	declare productId: number;
+
+	@ForeignKey(() => ProductVariant)
+	@Column({ type: DataType.INTEGER, allowNull: false })
+	declare productVariantId: number;
+
+	@Column({ type: DataType.INTEGER, allowNull: false })
+	declare quantity: number;
+
+	@Column({ type: DataType.DECIMAL(10, 2), allowNull: true })
+	declare size: number;
+
+	@Column({ type: DataType.DECIMAL(10, 2), allowNull: true })
+	declare widthInch: number;
+
+	@Column({ type: DataType.DECIMAL(10, 2), allowNull: true })
+	declare heightInch: number;
+
+	@Column({ type: DataType.DECIMAL(10, 2), allowNull: false })
+	declare price: number;
+
+	@BelongsTo(() => Order)
+	declare order: Order;
+
+	@BelongsTo(() => Product)
+	declare product: Product;
+
+	@BelongsTo(() => ProductVariant)
+	declare productVariant: ProductVariant;
+}
